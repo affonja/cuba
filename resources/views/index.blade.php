@@ -14,16 +14,18 @@
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"
              tabindex="0">
-            <form class="mt-5 mb-5" action="">
+            <form class="mt-5 mb-5" action="/" method="POST">
+                @csrf
                 <div class="row">
                     <label for="keyWord" class="form-label">Ключевое слово</label>
                 </div>
                 <div class="row">
                     <div class="col-3">
-                        <input type="text" class="form-control" id="keyWord" aria-describedby="keyWord">
+                        <input type="text" class="form-control" id="keyWord" aria-describedby="keyWord"
+                               placeholder="Москва" name="keyWord">
                     </div>
                     <div class="col-2">
-                        <button type="submit" class="btn btn-primary">Скопировать</button>
+                        <button type="submit" class="btn btn-primary" id="btnImport">Импорт</button>
                     </div>
                     <div class="col-3">
                         <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0"
@@ -85,6 +87,7 @@
 
         <div class="tab-pane fade" id="nav-search" role="tabpanel" aria-labelledby="nav-search-tab" tabindex="0">
             <form class="mt-5 mb-5" action="">
+                @csrf
                 <div class="row">
                     <div class="col-3">
                         <input type="text" class="form-control" id="searchWord" aria-describedby="searchWord">
@@ -114,7 +117,7 @@
                         </tr>
                     </table>
                 </div>
-                
+
                 <div class="articlePreview col-6">
                     nтекст статьи
                 </div>
