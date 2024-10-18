@@ -14,7 +14,7 @@
     <div class="tab-content" id="nav-tabContent">
         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"
              tabindex="0">
-            <form class="mt-5 mb-5" action="/" method="POST">
+            <form class="mt-5 mb-5" action="/" method="POST" id="formImport">
                 @csrf
                 <div class="row">
                     <label for="keyWord" class="form-label">Заголовок статьи</label>
@@ -23,6 +23,7 @@
                     <div class="col-3">
                         <input type="text" class="form-control" id="keyWord" aria-describedby="keyWord"
                                placeholder="" name="keyWord">
+                        <div class="feedback"></div>
                     </div>
                     <div class="col-2">
                         <button type="submit" class="btn btn-primary" id="btnImport">Импорт</button>
@@ -40,13 +41,10 @@
             </form>
 
             <div class="row">
-                <div class="statusImport col-12">
-                    <p>Импорт завершен.</p>
-                    <p>Найдена статья по адресу: <a href="{{ $articleData['link'] }}">{{ $articleData['link'] }}</a></p>
-                    <p>Время обработки: ??</p>
-                    <p>Кол-во слов: {{ $articleData['wordsCount'] }}</p>
+                <div class="statusImport col-12 d-none">
                 </div>
             </div>
+
 
             <div class="row">
                 <hr>
@@ -54,36 +52,7 @@
 
             <div class="row">
                 <div class="col-12 mt-3">
-                    <table class="table table-striped ">
-                        <thead>
-                        <tr>
-                            <th>Название cтатьи</th>
-                            <th>Ссылка</th>
-                            <th>Размер статьи</th>
-                            <th>Кол-во слов</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    @include('components.articles_table')
                 </div>
             </div>
         </div>

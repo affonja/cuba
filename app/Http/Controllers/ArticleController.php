@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Services\ApiService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
 {
@@ -17,16 +18,27 @@ class ArticleController extends Controller
         $this->apiService = $apiService;
     }
 
+    public function index()
+    {
+        $articles = Article::all();
+        return view('index', compact('articles'));
+    }
+
     public function getArticleFromApi(Request $request)
     {
-        $validated = $request->validate([
-            'keyWord' => 'required|max:255'
+        $validator = Validator::make($request->all(), [
+            'keyWord' => 'required|string|max:255',
         ]);
 
-        $articleData = $this->apiService->getDataArticle($this->url, $validated);
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $validatedData = $validator->validated();
+        $articleData = $this->apiService->getDataArticle($this->url, $validatedData);
         $this->store($articleData);
 
-        return view('index', compact('articleData'));
+        return $articleData;
     }
 
     public function store($data)
@@ -38,5 +50,11 @@ class ArticleController extends Controller
             'size' => $data['length'],
             'wordsCount' => $data['wordsCount'],
         ]);
+    }
+
+    public function updateTable()
+    {
+        $articles = Article::all();
+        return view('components.articles_table', compact('articles'));
     }
 }
