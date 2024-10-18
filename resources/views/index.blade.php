@@ -17,12 +17,12 @@
             <form class="mt-5 mb-5" action="/" method="POST">
                 @csrf
                 <div class="row">
-                    <label for="keyWord" class="form-label">Ключевое слово</label>
+                    <label for="keyWord" class="form-label">Заголовок статьи</label>
                 </div>
                 <div class="row">
                     <div class="col-3">
                         <input type="text" class="form-control" id="keyWord" aria-describedby="keyWord"
-                               placeholder="Москва" name="keyWord">
+                               placeholder="" name="keyWord">
                     </div>
                     <div class="col-2">
                         <button type="submit" class="btn btn-primary" id="btnImport">Импорт</button>
@@ -41,7 +41,10 @@
 
             <div class="row">
                 <div class="statusImport col-12">
-                    импорт завершен. результаты
+                    <p>Импорт завершен.</p>
+                    <p>Найдена статья по адресу: <a href="{{ $articleData['link'] }}">{{ $articleData['link'] }}</a></p>
+                    <p>Время обработки: ??</p>
+                    <p>Кол-во слов: {{ $articleData['wordsCount'] }}</p>
                 </div>
             </div>
 

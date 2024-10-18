@@ -14,7 +14,10 @@ return new class extends Migration {
             $table->engine = 'InnoDB';
             $table->id();
             $table->string('title');
-            $table->text('content');
+            $table->longText('content');
+            $table->string('link');
+            $table->bigInteger('size');
+            $table->integer('wordsCount');
             $table->timestamps();
         });
     }
