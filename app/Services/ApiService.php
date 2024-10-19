@@ -4,6 +4,7 @@ namespace App\Services;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\TransferStats;
 
 class ApiService
 {
@@ -37,7 +38,12 @@ class ApiService
 
     public function sendRequest($url, $params)
     {
-        $response = $this->client->get($url, ['query' => $params]);
+        $response = $this->client->get($url, [
+            'query' => $params,
+            'on_stats' => function (TransferStats $stats) use (&$executionTime) {
+                $executionTime = $stats->getTransferTime();
+            }
+        ]);
         if ($response->getStatusCode() !== 200) {
             throw new \Exception('Ошибка запроса: ' . $response->getStatusCode());
         }

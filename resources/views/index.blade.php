@@ -31,7 +31,7 @@
                     <div class="col-3">
                         <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0"
                              aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar" style="width: 0%"></div>
+                            <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
                         </div>
                     </div>
                 </div>
