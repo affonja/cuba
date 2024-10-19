@@ -20,14 +20,14 @@ class ArticleController extends Controller
 
     public function index()
     {
-        $articles = Article::all();
+        $articles = Article::orderBy('updated_at', 'desc')->get();
         return view('index', compact('articles'));
     }
 
     public function getArticleFromApi(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'keyWord' => 'required|string|max:255',
+            'keyWord' => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -39,12 +39,11 @@ class ArticleController extends Controller
         try {
             $articleData = $this->apiService->getDataArticle($this->url, $validatedData);
         } catch (\Exception $e) {
-            return response()->json([
-                'errors' => $e->getMessage()
-            ], 500);
+            return response()->json(['errors' => $e->getMessage()], 500);
         }
 
-        $this->store($articleData);
+        $article = Article::where('title', $articleData['title'])->first();
+        ($article) ? $this->update($article, $articleData) : $this->store($articleData);
 
         return $articleData;
     }
@@ -60,9 +59,19 @@ class ArticleController extends Controller
         ]);
     }
 
+    public function update($article, $data)
+    {
+        $article->update([
+            'content' => $data['content'],
+            'link' => $data['link'],
+            'size' => $data['length'],
+            'wordsCount' => $data['wordsCount'],
+        ]);
+    }
+
     public function updateTable()
     {
-        $articles = Article::all();
+        $articles = Article::orderBy('updated_at', 'desc')->get();
         return view('components.articles_table', compact('articles'));
     }
 }

@@ -18,10 +18,14 @@ class ApiService
     public function getDataArticle($url, $key, $format = 'json')
     {
         $queryParams = $this->buildQueryParams(reset($key), $format);
-        $response = $this->sendRequest($url, $queryParams);
+        list($response, $executionTime) = $this->sendRequest($url, $queryParams);
         $decodedResponse = $this->processResponse($response);
 
-        return $this->extractArticleData($decodedResponse);
+        $articleData = $this->extractArticleData($decodedResponse);
+        $articleData['length'] = $articleData['length'] / 1024;
+        $articleData['executionTime'] = $executionTime;
+
+        return $articleData;
     }
 
     public function buildQueryParams($key, $format)
@@ -38,6 +42,7 @@ class ApiService
 
     public function sendRequest($url, $params)
     {
+        $executionTime = 0;
         $response = $this->client->get($url, [
             'query' => $params,
             'on_stats' => function (TransferStats $stats) use (&$executionTime) {
@@ -48,7 +53,7 @@ class ApiService
             throw new \Exception('Ошибка запроса: ' . $response->getStatusCode());
         }
 
-        return $response->getBody()->getContents();
+        return [$response->getBody()->getContents(), $executionTime];
     }
 
     public function processResponse($response)

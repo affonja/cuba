@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('articles', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->id();
-            $table->string('title');
+            $table->string('title')->unique();
             $table->longText('content');
             $table->string('link');
             $table->bigInteger('size');

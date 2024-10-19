@@ -18,17 +18,7 @@ const importArticle = (keyWord, token) => {
         url: '/import',
         type: 'POST',
         data: {keyWord, _token: token},
-        xhr: function () {
-            $('#progress-bar').css('width', '0%');
-            let xhr = new window.XMLHttpRequest();
-            xhr.upload.onprogress = function (e) {
-                if (e.lengthComputable) {
-                    let percentComplete = e.loaded / e.total * 100;
-                    $('#progress-bar').css('width', percentComplete + '%');
-                }
-            };
-            return xhr;
-        },
+        xhr: progressbarUpdate,
         success: (response) => handleImportSuccess(response),
         error: (xhr, status, errors) => handleImportError(xhr, errors)
     });
@@ -40,7 +30,7 @@ const handleImportSuccess = (response) => {
         .html('')
         .append('<p>Импорт завершен.</p>')
         .append(`<p>Найдена статья по адресу: <a href="${response.link}">${response.link}</a></p>`)
-        .append('<p>Время обработки: ??</p>')
+        .append(`<p>Время обработки: ${response.executionTime}</p>`)
         .append(`<p>Кол-во слов: ${response.wordsCount}</p>`)
         .removeClass('d-none');
 
@@ -67,4 +57,14 @@ const updateArticlesTable = () => {
         }
     });
 };
-
+const progressbarUpdate = () => {
+    $('#progress-bar').css('width', '0%');
+    let xhr = new window.XMLHttpRequest();
+    xhr.upload.onprogress = function (e) {
+        if (e.lengthComputable) {
+            let percentComplete = e.loaded / e.total * 100;
+            $('#progress-bar').css('width', percentComplete + '%');
+        }
+    };
+    return xhr;
+}
