@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Services\ApiService;
+use App\Services\ArticleParserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
+use function Termwind\parse;
 
 class ArticleController extends Controller
 {
@@ -44,6 +47,8 @@ class ArticleController extends Controller
 
         $article = Article::where('title', $articleData['title'])->first();
         ($article) ? $this->update($article, $articleData) : $this->store($articleData);
+
+//        ArticleParserService::class->parseArticle($articleData['content']);
 
         return $articleData;
     }

@@ -75,7 +75,7 @@ class ApiService
             'content' => $page['extract'],
             'link' => $page['fullurl'],
             'length' => $page['length'],
-            'wordsCount' => str_word_count($page['extract']),
+            'wordsCount' => ArticleParserService::getCountWords($page['extract']),
         ];
     }
 
