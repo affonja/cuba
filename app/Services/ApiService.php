@@ -50,7 +50,7 @@ class ApiService
         $data = json_decode($response, true);
         $pages = $data['query']['pages'];
         $page = reset($pages);
-        if (!isset($page['extract'])) {
+        if (isset($page['missing'])) {
             throw new \Exception('Контент не найден');
         }
 

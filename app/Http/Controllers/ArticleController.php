@@ -35,7 +35,15 @@ class ArticleController extends Controller
         }
 
         $validatedData = $validator->validated();
-        $articleData = $this->apiService->getDataArticle($this->url, $validatedData);
+
+        try {
+            $articleData = $this->apiService->getDataArticle($this->url, $validatedData);
+        } catch (\Exception $e) {
+            return response()->json([
+                'errors' => $e->getMessage()
+            ], 500);
+        }
+
         $this->store($articleData);
 
         return $articleData;

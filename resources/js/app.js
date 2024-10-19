@@ -9,7 +9,7 @@ $(document).ready(function () {
         const keyWord = $('#keyWord').val();
 
         $.ajax({
-            url: '/',
+            url: '/import',
             type: 'POST',
             data: {
                 keyWord: keyWord,
@@ -35,12 +35,16 @@ $(document).ready(function () {
                     }
                 })
             },
-            error: function (xhr, status, errors, error) {
+            error: function (xhr, status, errors) {
                 if (xhr.status === 422) {
                     $('#keyWord').addClass('is-invalid');
                     $('.feedback').addClass('invalid-feedback').text('Исправьте ошибки в поле.');
                 } else {
-                    console.error('Error:', error);
+                    $('.statusImport')
+                        .html('')
+                        .append('<p>Ошибка импорта.</p>')
+                        .append('<p>Error: ' + errors + '</p>')
+                        .removeClass('d-none');
                 }
             }
         });
