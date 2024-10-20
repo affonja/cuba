@@ -10,6 +10,8 @@ class Word extends Model
 
     public function articles()
     {
-        return $this->belongsToMany(Article::class, 'article_atom')->withPivot('count');
+        return $this->belongsToMany(Article::class, 'article_word')
+            ->withPivot('count')
+            ->withTimestamps();
     }
 }

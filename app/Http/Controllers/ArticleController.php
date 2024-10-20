@@ -45,28 +45,39 @@ class ArticleController extends Controller
             return response()->json(['errors' => $e->getMessage()], 500);
         }
 
-        $article = Article::where('title', $articleData['title'])->first();
-        ($article) ? $this->update($article, $articleData) : $this->store($articleData);
+        if ($articleData['title'] === 'Минск') {
+            $articleData['content'] = 'город город';
+        } else {
+            $articleData['content'] = 'город';
+        }
 
-//        ArticleParserService::class->parseArticle($articleData['content']);
+
+        $article = Article::where('title', $articleData['title'])->first();
+        ($article) ? $this->update($article, $articleData) : $article = $this->store($articleData);
+
+        $words = ArticleParserService::getWords($articleData['content']);
+        $wordController = new WordController($words, $article);
+        $wordController->parseWords($words);
 
         return $articleData;
     }
 
     public function store($data)
     {
-        Article::create([
+        $article = Article::create([
             'title' => $data['title'],
             'content' => $data['content'],
             'link' => $data['link'],
             'size' => $data['length'],
             'wordsCount' => $data['wordsCount'],
         ]);
+        return $article;
     }
 
     public function update($article, $data)
     {
         $article->update([
+            'title' => $data['title'],
             'content' => $data['content'],
             'link' => $data['link'],
             'size' => $data['length'],

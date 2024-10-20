@@ -12,6 +12,8 @@
     </nav>
 
     <div class="tab-content" id="nav-tabContent">
+
+        {{--        tab import--}}
         <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"
              tabindex="0">
             <form class="mt-5 mb-5" action="/" method="POST" id="formImport">
@@ -57,12 +59,15 @@
             </div>
         </div>
 
+
+        {{--tab search --}}
         <div class="tab-pane fade" id="nav-search" role="tabpanel" aria-labelledby="nav-search-tab" tabindex="0">
-            <form class="mt-5 mb-5" action="">
+            <form class="mt-5 mb-5" action="/searchWord" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-3">
-                        <input type="text" class="form-control" id="searchWord" aria-describedby="searchWord">
+                        <input type="text" class="form-control" id="searchWord" aria-describedby="searchWord"
+                               name="keyWord">
                     </div>
                     <div class="col-2">
                         <button type="submit" class="btn btn-primary">Найти</button>
@@ -97,5 +102,7 @@
 
 
         </div>
+
+
     </div>
 @endsection
