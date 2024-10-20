@@ -30,7 +30,7 @@ class ArticleController extends Controller
     public function getArticleFromApi(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'keyWord' => 'required|max:255',
+            'titleWord' => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -89,5 +89,11 @@ class ArticleController extends Controller
     {
         $articles = Article::orderBy('updated_at', 'desc')->get();
         return view('components.articles_table', compact('articles'));
+    }
+
+    public function show($id)
+    {
+        $article = Article::findorfail($id);
+        return $article->content;
     }
 }

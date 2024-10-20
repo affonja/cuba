@@ -19,12 +19,12 @@
             <form class="mt-5 mb-5" action="/" method="POST" id="formImport">
                 @csrf
                 <div class="row">
-                    <label for="keyWord" class="form-label">Заголовок статьи</label>
+                    <label for="titleWord" class="form-label">Заголовок статьи</label>
                 </div>
                 <div class="row">
                     <div class="col-3">
-                        <input type="text" class="form-control" id="keyWord" aria-describedby="keyWord"
-                               placeholder="" name="keyWord">
+                        <input type="text" class="form-control" id="titleWord" aria-describedby="titleWord"
+                               placeholder="" name="titleWord">
                         <div class="feedback"></div>
                     </div>
                     <div class="col-2">
@@ -38,7 +38,7 @@
                     </div>
                 </div>
                 {{--                <div class="row">--}}
-                {{--                <div id="keyWord" class="form-text">Поиск по ключевому слову</div>--}}
+                {{--                <div id="titleWord" class="form-text">Поиск по ключевому слову</div>--}}
                 {{--                </div>--}}
             </form>
 
@@ -62,15 +62,15 @@
 
         {{--tab search --}}
         <div class="tab-pane fade" id="nav-search" role="tabpanel" aria-labelledby="nav-search-tab" tabindex="0">
-            <form class="mt-5 mb-5" action="/searchWord" method="POST">
+            <form class="mt-5 mb-5" action="/" method="POST">
                 @csrf
                 <div class="row">
                     <div class="col-3">
-                        <input type="text" class="form-control" id="searchWord" aria-describedby="searchWord"
+                        <input type="text" class="form-control" id="keyWord" aria-describedby="searchWord"
                                name="keyWord">
                     </div>
                     <div class="col-2">
-                        <button type="submit" class="btn btn-primary">Найти</button>
+                        <button type="submit" class="btn btn-primary" id="btnSearch">Найти</button>
                     </div>
                 </div>
             </form>
@@ -80,23 +80,14 @@
             </div>
 
             <div class="row">
-                <div class="resultSearch mt-3 mb-5">
-                    <p>Найдено XXX совпадений</p>
-                </div>
+                <div class="resultSearch mt-3 mb-5 d-none"></div>
             </div>
 
             <div class="row">
-                <div class="resultTable col-6">
-                    <table class="table table-striped ">
-                        <tr>
-                            <td>Название</td>
-                            <td>XX вхождений</td>
-                        </tr>
-                    </table>
+                <div class="resultTable col-6 d-none">
                 </div>
 
-                <div class="articlePreview col-6">
-                    nтекст статьи
+                <div class="articlePreview col-6 d-none border-2">
                 </div>
             </div>
 

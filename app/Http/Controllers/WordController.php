@@ -52,16 +52,18 @@ class WordController extends Controller
     public function searchWord(Request $request)
     {
         $keyWord = $request->keyWord;
-        $wordId = Word::where('word', $keyWord)->first()->id;
-        $sovpadeniaCount = DB::table('article_word')->where('word_id', $wordId)->count();
-        $sovpadenia = DB::table('article_word')->where('word_id', $wordId)->get()->toArray();
-        foreach ($sovpadenia as $item) {
-            $sovpadeniaArray[] = [
-                'article_id' => $item->article_id,
-                'count' => $item->count,
-                'title' => DB::table('articles')->where('id', $item->article_id)->first()->title,
-            ];
+        $word = Word::where('word', $keyWord)->first();
+        if ($word) {
+            $occurrences = DB::table('article_word')->where('word_id', $word->id)->get()->toArray();
+            foreach ($occurrences as $item) {
+                $occurrencesArray[] = [
+                    'count' => $item->count,
+                    'title' => DB::table('articles')->where('id', $item->article_id)->first()->title,
+                    'link' => '/article/' . $item->article_id,
+                ];
+            }
+            return $occurrencesArray;
         }
-        return $sovpadeniaArray ?? [];
+        return [];
     }
 }
