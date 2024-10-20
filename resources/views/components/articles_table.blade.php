@@ -1,10 +1,10 @@
 <table class="table table-striped" id="articlesTable">
     <thead>
     <tr>
-        <th>Название cтатьи</th>
-        <th>Ссылка</th>
-        <th>Размер статьи</th>
-        <th>Кол-во слов</th>
+        <th>{{ __('Название cтатьи') }}</th>
+        <th>{{ __('Ссылка') }}</th>
+        <th>{{ __('Размер статьи') }}</th>
+        <th>{{ __('Кол-во слов') }}</th>
     </tr>
     </thead>
     <tbody>
