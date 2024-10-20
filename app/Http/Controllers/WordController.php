@@ -22,36 +22,31 @@ class WordController extends Controller
     {
         $words = array_count_values($words);
         foreach ($words as $word => $count) {
-            $model = Word::where('word', $word)->first();
-            if ($model) {
-                $this->update($model, $count);
+            $wordModel = Word::firstOrCreate(['word' => $word]);
+
+            if ($this->article->words()->where('word_id', $wordModel->id)->exists()) {
+                $this->update($wordModel, $count);
             } else {
-                $this->store($word, $count);
+                $this->store($wordModel, $count);
             }
         }
     }
 
-    public function store($word, $count)
+    public function store($wordModel, $count)
     {
-        $model = Word::create(['word' => $word]);
-        $this->article->words()->attach($model->id, ['count' => $count]);
+        $this->article->words()->attach($wordModel->id, [
+            'count' => $count,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     }
 
-    public function update($model, $count)
+    public function update($wordModel, $count)
     {
-        $modelSvaz = DB::table('article_word')->where('word_id', $model->id)->where(
-            'article_id',
-            $this->article->id
-        )->first();
-        if ($modelSvaz) {
-            DB::table('article_word')->where('word_id', $model->id)->where('article_id', $this->article->id)->update(
-                ['count' => $count]
-            );
-        } else {
-            DB::table('article_word')->insert(
-                ['word_id' => $model->id, 'article_id' => $this->article->id, 'count' => $count]
-            );
-        }
+        $this->article->words()->updateExistingPivot($wordModel->id, [
+            'count' => $count,
+            'updated_at' => now(),
+        ]);
     }
 
     public function searchWord(Request $request)
