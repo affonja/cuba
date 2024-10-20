@@ -9,7 +9,8 @@
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
-        "laravel/ui": "^4.5"
+        "laravel/ui": "^4.5",
+        "tightenco/ziggy": "^2.3"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.14",

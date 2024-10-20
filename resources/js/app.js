@@ -1,5 +1,7 @@
 import './bootstrap';
 import $ from 'jquery';
+import {route} from 'ziggy-js';
+
 
 window.$ = window.jQuery = $;
 
@@ -26,6 +28,7 @@ $(document).ready(function () {
     });
 });
 
+// search
 const showArticlePreview = (link) => {
     let articlePreview = $('.articlePreview');
     $.ajax({
@@ -36,24 +39,25 @@ const showArticlePreview = (link) => {
     });
 }
 const searchArticle = (keyWord, token) => {
-    $('.articlePreview').html('').addClass('d-none');
-    $('.resultTable').remove('table').addClass('d-none');
-    $('.resultSearch').html('').addClass('d-none');
-
+    resetResult();
     $.ajax({
-        url: '/search',
+        url: route('word.search'),
         type: 'POST',
         data: {keyWord, _token: token},
         success: (response) => handleSearchSuccess(response),
         error: (xhr, status, errors) => handleSearchError(xhr, errors)
     });
 }
+const resetResult = () => {
+    $('.articlePreview').html('').addClass('d-none');
+    $('.resultTable').html('').addClass('d-none');
+    $('.resultSearch').html('').addClass('d-none');
+}
 const handleSearchSuccess = (response) => {
     $('#keyWord').removeClass('is-invalid');
     $('.feedback').removeClass('invalid-feedback').text('');
     $('.resultSearch')
-        .html('')
-        .append(`<p>Найдено: ${response.length} совпадений.</p>`)
+        .html(`<p>Найдено: ${response.length} совпадений.</p>`)
         .removeClass('d-none');
 
     showResultTable(response);
@@ -64,35 +68,31 @@ const handleSearchError = (xhr, errors) => {
         $('.feedback').addClass('invalid-feedback').text('Исправьте ошибки в поле.');
     } else {
         $('.resultSearch')
-            .html('')
-            .append('<p>Ошибка поиска.</p>')
-            .append(`<p>Error: ${errors}</p>`)
+            .html(`<p>Ошибка поиска.</p><p>Error: ${errors}</p>`)
             .removeClass('d-none');
     }
-    // hideResultTable();
 }
 const showResultTable = (response) => {
-    const table = $('<table class="table table-striped"></table>');
+    const table = $('<table class="table"></table>');
     response.forEach(item => {
         const row = `
-            <tr>
-                <td>
-                <a href="${item.link}" class="link-primary">${item.title}</a>
-                </td>
+            <tr class="lh-lg">
+                <td><a href="${item.link}" 
+                class="link-primary border-0 text-decoration-underline"
+                >${item.title}</a></td>
                 <td>${item.count} вхождений</td>
             </tr>
         `;
         table.append(row);
     });
 
-    $('.resultTable')
-        .html('')
-        .append(table)
-        .removeClass('d-none');
+    $('.resultTable').append(table).removeClass('d-none');
 }
+
+// import
 const importArticle = (titleWord, token) => {
     $.ajax({
-        url: '/import',
+        url: route('article.import'),
         type: 'POST',
         data: {titleWord, _token: token},
         xhr: progressbarUpdate,
@@ -103,12 +103,14 @@ const importArticle = (titleWord, token) => {
 const handleImportSuccess = (response) => {
     $('#titleWord').removeClass('is-invalid');
     $('.feedback').removeClass('invalid-feedback').text('');
+
     $('.statusImport')
-        .html('')
-        .append('<p>Импорт завершен.</p>')
-        .append(`<p>Найдена статья по адресу: <a href="${response.link}">${response.link}</a></p>`)
-        .append(`<p>Время обработки: ${response.executionTime}</p>`)
-        .append(`<p>Кол-во слов: ${response.wordsCount}</p>`)
+        .html(`
+            <p class="text-success text-uppercase fw-bold">Импорт завершен.</p>
+            <p>Найдена статья по адресу: <a href="${response.link}">${response.link}</a></p>
+            <p>Время обработки: ${response.executionTime} секунд</p>
+            <p>Кол-во слов: ${response.wordsCount}</p>        
+        `)
         .removeClass('d-none');
 
     updateArticlesTable();
@@ -119,19 +121,16 @@ const handleImportError = (xhr, errors) => {
         $('.feedback').addClass('invalid-feedback').text('Исправьте ошибки в поле.');
     } else {
         $('.statusImport')
-            .html('')
-            .append('<p>Ошибка импорта.</p>')
-            .append(`<p>Error: ${errors}</p>`)
+            .html(`<p class="text-danger text-uppercase fw-bold">Ошибка импорта.</p><p>Error: ${xhr.responseJSON.errors}</p>`)
             .removeClass('d-none');
     }
 };
 const updateArticlesTable = () => {
+    console.log(route('article.updTable'));
     $.ajax({
-        url: '/updTable',
+        url: route('article.updTable'),
         type: 'GET',
-        success: (response) => {
-            $('#articlesTable').html(response);
-        }
+        success: (response) => $('#articlesTable').html(response)
     });
 };
 const progressbarUpdate = () => {

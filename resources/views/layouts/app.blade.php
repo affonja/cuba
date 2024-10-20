@@ -10,7 +10,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-
+    @routes
 </head>
 <body>
 {{--@include('layouts.header')--}}

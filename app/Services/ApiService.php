@@ -23,7 +23,7 @@ class ApiService
 
         $articleData = $this->extractArticleData($decodedResponse);
         $articleData['length'] = $articleData['length'] / 1024;
-        $articleData['executionTime'] = $executionTime;
+        $articleData['executionTime'] = round($executionTime, 2);
 
         return $articleData;
     }
@@ -36,7 +36,8 @@ class ApiService
             'titles' => $key,
             'prop' => 'extracts|info',
             'inprop' => 'url',
-            'explaintext' => 'true'
+            'explaintext' => 'true',
+            'redirects' => 'true',
         ];
     }
 
@@ -73,7 +74,7 @@ class ApiService
         return [
             'title' => $page['title'],
             'content' => $page['extract'],
-            'link' => $page['fullurl'],
+            'link' => urldecode($page['fullurl']),
             'length' => $page['length'],
             'wordsCount' => ArticleParserService::getCountWords($page['extract']),
         ];
