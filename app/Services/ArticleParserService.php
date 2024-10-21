@@ -4,17 +4,27 @@ namespace App\Services;
 
 class ArticleParserService
 {
-    public static function getCountWords($text)
+    protected $words = [];
+
+    public function setWords($words)
     {
-        $pattern = '/[^\p{L}\p{N}]+/u';
-        $count = preg_match_all($pattern, $text, $words);
-        return $count;
+        $this->words = $this->extractWords($words);
     }
 
-    public static function getWords($text)
+    public function getCountWords()
+    {
+        return count($this->words);
+    }
+
+    public function getWords()
+    {
+        return $this->words;
+    }
+
+    protected function extractWords($text)
     {
         $pattern = '/[\p{L}\p{N}-]+/u';
-        $count = preg_match_all($pattern, $text, $words);
-        return $words[0];
+        preg_match_all($pattern, $text, $matches);
+        return $matches[0];
     }
 }

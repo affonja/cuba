@@ -9,10 +9,16 @@ use GuzzleHttp\TransferStats;
 class ApiService
 {
     protected $client;
+    public $articleParserService;
 
-    public function __construct()
+    const HTTP_OK = 200;
+    const BYTES_IN_KILOBYTE = 1024;
+    const ROUND_FOR_TIME = 2;
+
+    public function __construct(Client $client, ArticleParserService $articleParserService)
     {
-        $this->client = new Client();
+        $this->client = $client;
+        $this->articleParserService = $articleParserService;
     }
 
     public function getDataArticle($url, $key, $format = 'json')
@@ -21,11 +27,7 @@ class ApiService
         list($response, $executionTime) = $this->sendRequest($url, $queryParams);
         $decodedResponse = $this->processResponse($response);
 
-        $articleData = $this->extractArticleData($decodedResponse);
-        $articleData['length'] = $articleData['length'] / 1024;
-        $articleData['executionTime'] = round($executionTime, 2);
-
-        return $articleData;
+        return $this->extractArticleData($decodedResponse, $executionTime);
     }
 
     public function buildQueryParams($key, $format)
@@ -50,7 +52,7 @@ class ApiService
                 $executionTime = $stats->getTransferTime();
             }
         ]);
-        if ($response->getStatusCode() !== 200) {
+        if ($response->getStatusCode() !== self::HTTP_OK) {
             throw new \Exception('Ошибка запроса: ' . $response->getStatusCode());
         }
 
@@ -69,14 +71,16 @@ class ApiService
         return $page;
     }
 
-    public function extractArticleData($page)
+    public function extractArticleData($page, $executionTime)
     {
+        $this->articleParserService->setWords($page['extract']);
         return [
             'title' => $page['title'],
             'content' => $page['extract'],
             'link' => urldecode($page['fullurl']),
-            'length' => $page['length'],
-            'wordsCount' => ArticleParserService::getCountWords($page['extract']),
+            'length' => $page['length'] / self::BYTES_IN_KILOBYTE,
+            'wordsCount' => $this->articleParserService->getCountWords(),
+            'executionTime' => round($executionTime, self::ROUND_FOR_TIME),
         ];
     }
 

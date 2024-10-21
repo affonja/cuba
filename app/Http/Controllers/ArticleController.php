@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Services\ApiService;
-use App\Services\ArticleParserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-use function Termwind\parse;
 
 class ArticleController extends Controller
 {
@@ -45,44 +43,26 @@ class ArticleController extends Controller
             return response()->json(['errors' => $e->getMessage()], 500);
         }
 
-        if ($articleData['title'] === 'Минск') {
-            $articleData['content'] = 'город город';
-        } else {
-            $articleData['content'] = 'город';
-        }
+        $article = Article::updateOrCreate(
+            ['title' => $articleData['title']],
+            $this->prepareArticleData($articleData)
+        );
 
-
-        $article = Article::where('title', $articleData['title'])->first();
-        ($article) ? $this->update($article, $articleData) : $article = $this->store($articleData);
-
-        $words = ArticleParserService::getWords($articleData['content']);
+        $words = $words = $this->apiService->articleParserService->getWords();
         $wordController = new WordController($words, $article);
-        $wordController->parseWords($words);
+        $wordController->parseWords();
 
         return $articleData;
     }
 
-    public function store($data)
+    private function prepareArticleData($data)
     {
-        $article = Article::create([
-            'title' => $data['title'],
+        return [
             'content' => $data['content'],
             'link' => $data['link'],
             'size' => $data['length'],
             'wordsCount' => $data['wordsCount'],
-        ]);
-        return $article;
-    }
-
-    public function update($article, $data)
-    {
-        $article->update([
-            'title' => $data['title'],
-            'content' => $data['content'],
-            'link' => $data['link'],
-            'size' => $data['length'],
-            'wordsCount' => $data['wordsCount'],
-        ]);
+        ];
     }
 
     public function updateTable()

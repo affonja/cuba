@@ -3,6 +3,7 @@
     <div class="row">
         <div class="col-3">
             <input type="text" class="form-control" id="keyWord" aria-describedby="searchWord" name="keyWord">
+            <div class="feedback"></div>
         </div>
         <div class="col-2">
             <button type="submit" class="btn btn-primary" id="btnSearch">{{ __('Найти') }}</button>
