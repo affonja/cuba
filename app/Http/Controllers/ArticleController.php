@@ -23,7 +23,7 @@ class ArticleController extends Controller
 
     public function index()
     {
-        $articles = Article::orderBy('updated_at', 'desc')->get();
+        $articles = Article::orderBy('updated_at', 'desc')->paginate(10);
         return view('index', compact('articles'));
     }
 
@@ -78,13 +78,13 @@ class ArticleController extends Controller
 
     public function updateTable()
     {
-        $articles = Article::orderBy('updated_at', 'desc')->get();
+        $articles = Article::orderBy('updated_at', 'desc')->paginate(10);
         return view('components.articles_table', compact('articles'));
     }
 
     public function show($id)
     {
-        $article = Article::findorfail($id);
+        $article = Article::findOrFail($id, ['content']);
         return $article->content;
     }
 }

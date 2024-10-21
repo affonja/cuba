@@ -15,4 +15,9 @@
             @include('components.articles_table')
         </div>
     </div>
+    <div class="row">
+        <div class="col-12 mt-3">
+            {{ $articles->links() }}
+        </div>
+    </div>
 </div>
