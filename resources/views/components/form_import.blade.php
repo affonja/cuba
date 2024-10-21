@@ -17,9 +17,12 @@
         </div>
 
         <div class="col-3">
-            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0"
-                 aria-valuemin="0" aria-valuemax="100">
-                <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>
+            {{--            <div class="progress" role="progressbar" aria-label="Basic example" aria-valuenow="0"--}}
+            {{--                 aria-valuemin="0" aria-valuemax="100">--}}
+            {{--                <div id="progress-bar" class="progress-bar" style="width: 0%;"></div>--}}
+            {{--            </div>--}}
+            <div id="spinner" class="spinner-border" role="status" style="display: none;">
+                <span class="visually-hidden">Загрузка...</span>
             </div>
         </div>
 

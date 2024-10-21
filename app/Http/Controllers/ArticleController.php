@@ -14,6 +14,8 @@ class ArticleController extends Controller
     protected $url = 'https://ru.wikipedia.org/w/api.php';
     protected $apiService;
 
+    const ROUND_FOR_TIME = 2;
+
     public function __construct(ApiService $apiService)
     {
         $this->apiService = $apiService;
@@ -27,6 +29,8 @@ class ArticleController extends Controller
 
     public function getArticleFromApi(Request $request)
     {
+        $startTime = microtime(true);
+
         $validator = Validator::make($request->all(), [
             'titleWord' => 'required|max:255',
         ]);
@@ -52,7 +56,14 @@ class ArticleController extends Controller
         $wordController = new WordController($words, $article);
         $wordController->parseWords();
 
-        return $articleData;
+
+        $endTime = microtime(true);
+        $executionTime = $endTime - $startTime;
+
+        return response()->json([
+            'articleData' => $articleData,
+            'executionTime' => round($executionTime / self::ROUND_FOR_TIME)
+        ]);
     }
 
     private function prepareArticleData($data)

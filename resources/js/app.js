@@ -91,13 +91,24 @@ const showResultTable = (response) => {
 
 // import
 const importArticle = (titleWord, token) => {
+    // Show the spinner
+    $('#spinner').show();
+
     $.ajax({
         url: route('article.import'),
         type: 'POST',
         data: {titleWord, _token: token},
-        xhr: progressbarUpdate,
-        success: (response) => handleImportSuccess(response),
-        error: (xhr, status, errors) => handleImportError(xhr, errors)
+        // xhr: progressbarUpdate,
+        success: (response) => {
+            handleImportSuccess(response);
+            // Hide the spinner
+            $('#spinner').hide();
+        },
+        error: (xhr, status, errors) => {
+            handleImportError(xhr, errors);
+            // Hide the spinner
+            $('#spinner').hide();
+        }
     });
 };
 const handleImportSuccess = (response) => {
