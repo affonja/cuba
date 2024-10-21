@@ -52,7 +52,7 @@ class ArticleController extends Controller
             $this->prepareArticleData($articleData)
         );
 
-        $words = $words = $this->apiService->articleParserService->getWords();
+        $words = $this->apiService->articleParserService->getWords();
         $wordController = new WordController($words, $article);
         $wordController->parseWords();
 

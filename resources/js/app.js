@@ -118,9 +118,9 @@ const handleImportSuccess = (response) => {
     $('.statusImport')
         .html(`
             <p class="text-success text-uppercase fw-bold">Импорт завершен.</p>
-            <p>Найдена статья по адресу: <a href="${response.link}">${response.link}</a></p>
+            <p>Найдена статья по адресу: <a href="${response.articleData.link}">${response.articleData.link}</a></p>
             <p>Время обработки: ${response.executionTime} секунд</p>
-            <p>Кол-во слов: ${response.wordsCount}</p>        
+            <p>Кол-во слов: ${response.articleData.wordsCount}</p>        
         `)
         .removeClass('d-none');
 
@@ -137,21 +137,9 @@ const handleImportError = (xhr, errors) => {
     }
 };
 const updateArticlesTable = () => {
-    console.log(route('article.updTable'));
     $.ajax({
         url: route('article.updTable'),
         type: 'GET',
         success: (response) => $('#articlesTable').html(response)
     });
 };
-const progressbarUpdate = () => {
-    $('#progress-bar').css('width', '0%');
-    let xhr = new window.XMLHttpRequest();
-    xhr.upload.onprogress = function (e) {
-        if (e.lengthComputable) {
-            let percentComplete = e.loaded / e.total * 100;
-            $('#progress-bar').css('width', percentComplete + '%');
-        }
-    };
-    return xhr;
-}
