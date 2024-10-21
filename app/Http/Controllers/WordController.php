@@ -43,8 +43,6 @@ class WordController extends Controller
 
     public function searchWord(Request $request)
     {
-//        $keyWord = $request->keyWord;
-
         $validator = Validator::make($request->all(), [
             'keyWord' => 'required|max:255',
         ]);
@@ -65,7 +63,8 @@ class WordController extends Controller
                     'link' => '/article/' . $article->id,
                 ];
             }
-            return $occurrencesArray;
+            $collect = collect($occurrencesArray);
+            return $collect->sortByDesc('count')->values()->toArray();
         }
         return [];
     }
