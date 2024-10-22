@@ -45,11 +45,14 @@ class ArticleController extends Controller
         } catch (\Exception $e) {
             return response()->json(['errors' => $e->getMessage()], 500);
         }
-
-        $article = Article::updateOrCreate(
-            ['title' => $articleData['title']],
-            $this->prepareArticleData($articleData)
-        );
+        try {
+            $article = Article::updateOrCreate(
+                ['title' => $articleData['title']],
+                $this->prepareArticleData($articleData)
+            );
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 500);
+        }
 
         $words = $this->apiService->articleParserService->getWords();
         $wordController = new WordController($words, $article);

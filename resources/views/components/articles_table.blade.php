@@ -12,7 +12,8 @@
         <tr>
             <td>{{ $article->title }}</td>
             <td><a href="{{ $article->link }}">{{ $article->link }}</a></td>
-            <td>{{ $article->size }} Kb</td>
+            {{--            <td>{{ $article->size }} Kb</td>--}}
+            <td>{{ Number::fileSize($article->size) }}</td>
             <td>{{ $article->wordsCount }}</td>
         </tr>
     @endforeach

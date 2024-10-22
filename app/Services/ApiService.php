@@ -3,8 +3,7 @@
 namespace App\Services;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\TransferStats;
+use Illuminate\Support\Number;
 
 class ApiService
 {
@@ -73,7 +72,7 @@ class ApiService
             'title' => $page['title'],
             'content' => $page['extract'],
             'link' => urldecode($page['fullurl']),
-            'length' => $page['length'] / self::BYTES_IN_KILOBYTE,
+            'length' => $page['length'],
             'wordsCount' => $this->articleParserService->getCountWords(),
         ];
     }
