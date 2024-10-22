@@ -26,7 +26,7 @@ class WordController extends Controller
         }
     }
 
-    private function saveWord($wordModel, $count)
+    public function saveWord($wordModel, $count)
     {
         $data = [
             'count' => $count,

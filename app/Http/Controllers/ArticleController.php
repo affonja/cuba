@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Validator;
 
 class ArticleController extends Controller
 {
-
     protected $url = 'https://ru.wikipedia.org/w/api.php';
     protected $apiService;
 
