@@ -17,5 +17,4 @@ class Word extends Model
             ->withPivot('count')
             ->withTimestamps();
     }
-
 }

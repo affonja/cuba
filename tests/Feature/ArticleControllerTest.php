@@ -44,5 +44,4 @@ class ArticleControllerTest extends TestCase
             'executionTime'
         ]);
     }
-
 }

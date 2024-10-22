@@ -103,6 +103,4 @@ class ApiService
             'wordsCount' => $this->articleParserService->getCountWords(),
         ];
     }
-
-
 }
