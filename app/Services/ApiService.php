@@ -2,16 +2,16 @@
 
 namespace App\Services;
 
+use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Number;
 
 class ApiService
 {
     protected $client;
     public $articleParserService;
-
     const HTTP_OK = 200;
-    const BYTES_IN_KILOBYTE = 1024;
 
     public function __construct(Client $client, ArticleParserService $articleParserService)
     {
@@ -19,7 +19,14 @@ class ApiService
         $this->articleParserService = $articleParserService;
     }
 
-    public function getDataArticle($url, $key, $format = 'json')
+    /** Get an article on the api
+     * @param  string  $url
+     * @param  array  $key
+     * @param  string  $format
+     * @return array
+     * @throws Exception
+     */
+    public function getDataArticle(string $url, array $key, string $format = 'json'): array
     {
         $queryParams = $this->buildQueryParams(reset($key), $format);
         $response = $this->sendRequest($url, $queryParams);
@@ -28,7 +35,12 @@ class ApiService
         return $this->extractArticleData($decodedResponse);
     }
 
-    public function buildQueryParams($key, $format)
+    /** Build query params
+     * @param  string  $key
+     * @param  string  $format
+     * @return array
+     */
+    public function buildQueryParams(string $key, string $format): array
     {
         return [
             'action' => 'query',
@@ -41,31 +53,46 @@ class ApiService
         ];
     }
 
-    public function sendRequest($url, $params)
+    /** Send request to api
+     * @param  string  $url
+     * @param  array  $params
+     * @return string
+     * @throws Exception|GuzzleException
+     */
+    public function sendRequest(string $url, array $params): string
     {
         $response = $this->client->get($url, [
             'query' => $params,
         ]);
         if ($response->getStatusCode() !== self::HTTP_OK) {
-            throw new \Exception('Ошибка запроса: ' . $response->getStatusCode());
+            throw new Exception('Ошибка запроса: ' . $response->getStatusCode());
         }
 
         return $response->getBody()->getContents();
     }
 
-    public function processResponse($response)
+    /** Response processing
+     * @param  string  $response
+     * @return array
+     * @throws Exception
+     */
+    public function processResponse(string $response): array
     {
         $data = json_decode($response, true);
         $pages = $data['query']['pages'];
         $page = reset($pages);
         if (isset($page['missing'])) {
-            throw new \Exception('Контент не найден');
+            throw new Exception('Контент не найден');
         }
 
         return $page;
     }
 
-    public function extractArticleData($page)
+    /** Extracts data from the uploaded article
+     * @param  array  $page
+     * @return array
+     */
+    public function extractArticleData(array $page): array
     {
         $this->articleParserService->setWords($page['extract']);
         return [
