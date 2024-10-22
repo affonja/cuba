@@ -1,41 +1,23 @@
-# Use the official PHP image as a base image
-FROM php:8.1-fpm
+FROM php:8.2-cli
 
-# Set working directory
-WORKDIR /var/www
-
-# Install dependencies
 RUN apt-get update && apt-get install -y \
-    build-essential \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    locales \
-    zip \
-    jpegoptim optipng pngquant gifsicle \
-    vim \
-    unzip \
-    git \
-    curl
+    libpq-dev \
+    libzip-dev
+RUN docker-php-ext-install pdo pdo_pgsql zip
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+    && php -r "unlink('composer-setup.php');"
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN apt-get install -y nodejs
 
-# Copy existing application directory contents
-COPY . /var/www
+WORKDIR /app
 
-# Copy existing application directory permissions
-COPY --chown=www-data:www-data . /var/www
+COPY . .
+RUN composer install
+RUN npm ci
+RUN npm run build
 
-# Change current user to www
-USER www-data
-
-# Expose port 9000 and start php-fpm server
-EXPOSE 9000
-CMD ["php-fpm"]
+CMD ["bash", "-c", "php artisan migrate:refresh --force --seed && php artisan serve --host=0.0.0.0 --port=$PORT"]
