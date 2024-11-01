@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->foreignId('word_id')->constrained()->onDelete('cascade');
             $table->integer('count');
             $table->timestamps();
-            $table->index(['article_id', 'word_id']);
+            $table->unique(['article_id', 'word_id']);
         });
     }
 

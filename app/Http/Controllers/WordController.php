@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Word;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -19,37 +21,78 @@ class WordController extends Controller
         $this->article = $article;
     }
 
-    /** Saves/updates the words from the article to the database
-     */
+    /** Parse and updates the words from the article to the database     */
     public function parseWords(): void
     {
         $words = array_count_values($this->words);
-        foreach ($words as $word => $count) {
-            $wordModel = Word::firstOrCreate(['word' => $word]);
-            $this->saveWord($wordModel, $count);
-        }
+        $this->saveNewWords($words);
+        $updateData = $this->prepareData($words);
+        $this->updateWords($updateData);
     }
 
-    /** Saves/updates the word to the database
-     * @param  Word  $wordModel
-     * @param  int  $count
+    /**
+     * Updates/saves the words in the database
+     * @param  array  $updateData
      */
-    public function saveWord(Word $wordModel, int $count): void
+    private function updateWords(array $updateData): void
     {
-        $data = [
-            'count' => $count,
-            'updated_at' => now(),
-        ];
+        DB::table('article_word')->upsert($updateData, ['article_id', 'word_id'], ['count', 'updated_at']);
+    }
 
-        if ($this->article->words()->where('word_id', $wordModel->id)->exists()) {
-            $this->article->words()->updateExistingPivot($wordModel->id, $data);
-        } else {
-            $data['created_at'] = now();
-            $this->article->words()->attach($wordModel->id, $data);
+    /**
+     * Prepares the data for update database
+     * @param  array  $words
+     * @return array
+     */
+    protected function prepareData(array $words): array
+    {
+        $existingWords = $this->getWords();
+
+        foreach ($words as $word => $count) {
+            $wordId = $existingWords[$word]->id;
+            $data[] = [
+                'article_id' => $this->article->id,
+                'word_id' => $wordId,
+                'count' => $count,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        return $data ?? [];
+    }
+
+    /**
+     * Saves the new words to the database
+     * @param  array  $words
+     * @return void
+     */
+    protected function saveNewWords(array $words): void
+    {
+        $existingWords = $this->getWords();
+        $newWords = [];
+
+        foreach ($words as $word => $count) {
+            if (!isset($existingWords[$word])) {
+                $newWords[] = ['word' => $word, 'created_at' => now(), 'updated_at' => now()];
+            }
+        }
+        if (!empty($newWords)) {
+            Word::insert($newWords);
         }
     }
 
-    /** Searches for the word in the database
+    /**
+     * Returns the existing words from the database
+     * @return Collection
+     */
+    protected function getWords(): Collection
+    {
+        return Word::whereIn('word', $this->words)->get()->keyBy('word');
+    }
+
+    /**
+     * Searches for the word in the database
      * @param  Request  $request
      * @return array|JsonResponse
      * @throws ValidationException
@@ -81,4 +124,6 @@ class WordController extends Controller
         }
         return [];
     }
+
+
 }

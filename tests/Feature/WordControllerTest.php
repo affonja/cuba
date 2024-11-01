@@ -39,17 +39,17 @@ class WordControllerTest extends TestCase
         }
     }
 
-    public function testSaveWord()
-    {
-        $wordModel = Word::firstOrCreate(['word' => $this->words[0]]);
-        $this->controller->saveWord($wordModel, 3);
-
-        $this->assertDatabaseHas('article_word', [
-            'article_id' => $this->article->id,
-            'word_id' => $wordModel->id,
-            'count' => 3,
-        ]);
-    }
+//    public function testSaveWord()
+//    {
+//        $wordModel = Word::firstOrCreate(['word' => $this->words[0]]);
+//        $this->controller->saveWord($wordModel, 3);
+//
+//        $this->assertDatabaseHas('article_word', [
+//            'article_id' => $this->article->id,
+//            'word_id' => $wordModel->id,
+//            'count' => 3,
+//        ]);
+//    }
 
     public function testSearchWord()
     {
